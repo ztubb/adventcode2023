@@ -9,7 +9,10 @@ int MAX_GREEN = 13;
 int MAX_BLUE = 14;
 
 vector<int> validGames;
-int finalAnswer = 0;
+int sumValidGameIds = 0;
+
+vector<int> setPowers;
+int sumSetPowers = 0;
 
 vector<string> splitString(string str, string delimiter) {
     vector<string> result;
@@ -31,34 +34,58 @@ bool checkResults (vector<string> results) {
     bool greenPossible = true;
     bool bluePossible = true;
 
+    int minRed = 0;
+    int minGreen = 0;
+    int minBlue = 0;
+
     for (const string set : results) {
 
         vector<string> colorSets = splitString(set, ", ");
 
         for (const string colorSet : colorSets) {
             int space = colorSet.find(" ");
-            string count = colorSet.substr(0, space);
+            int count = stoi(colorSet.substr(0, space));
             string color = colorSet.substr(space + 1);
 
             if (color == "red") {
-                if (stoi(count) > MAX_RED) {
+                if (count > MAX_RED) {
                     redPossible = false;
+                }
+
+                if (count > minRed) {
+                    minRed = count;
                 }
             }
 
             if (color == "green") {
-                if (stoi(count) > MAX_GREEN) {
+                if (count > MAX_GREEN) {
                     greenPossible = false;
+                }
+
+                if (count > minGreen) {
+                    minGreen = count;
                 }
             }
 
             if (color == "blue") {
-                if (stoi(count) > MAX_BLUE) {
+                if (count > MAX_BLUE) {
                     bluePossible = false;
+                }
+
+                if (count > minBlue) {
+                    minBlue = count;
                 }
             }
         }
     }
+
+    // cout << "Min red: " + to_string(minRed) + ", Min green: " + to_string(minGreen) + ", Min blue: " + to_string(minBlue) << endl;
+
+    int power = minRed * minGreen * minBlue;
+    setPowers.push_back(power);
+    sumSetPowers += power;
+
+    cout << "Set power: " + to_string(power) << endl;
 
     if (redPossible && greenPossible && bluePossible) {
         return true;
@@ -88,7 +115,7 @@ string parseGame (string results) {
     if (valid == 1) {
         cout << "Game " + game + " valid" << endl;
         validGames.push_back(stoi(game));
-        finalAnswer += stoi(game);
+        sumValidGameIds += stoi(game);
     } else {
         cout << "Game " + game + " invalid" << endl;
     }
@@ -109,5 +136,6 @@ int main()
     }
     results.close();
 
-    cout << "Final answer: " + to_string(finalAnswer) << endl;
+    cout << "Sum of valid game IDs: " + to_string(sumValidGameIds) << endl;
+    cout << "Sum of set powers: " + to_string(sumSetPowers) << endl;
 }
